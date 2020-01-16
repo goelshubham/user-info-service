@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import com.userinfoservice.entity.Usage;
 import com.userinfoservice.entity.UsageRequest;
 import com.userinfoservice.entity.User;
+import com.userinfoservice.entity.UserRequest;
 import com.userinfoservice.exceptions.DatabaseException;
 import com.userinfoservice.repository.UserRepository;
 
@@ -31,12 +32,17 @@ public class UserInfoService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public String storeUserInfo(User user) throws Exception {
+	public String storeUserInfo(UserRequest userRequest) throws Exception {
 
 		log.debug("storeUserInfo() - start of method");
 
 		String userId = RandomStringUtils.randomAlphabetic(10);
+		User user = new User();
 		user.setId(userId);
+		user.setUserName(userRequest.getUserName());
+		user.setCountry(userRequest.getCountry());
+		user.setPhoneNumber(userRequest.getPhoneNumber());
+		user.setEmail(userRequest.getEmail());
 		try {
 			userRepository.save(user);
 		} catch (Exception ex) {

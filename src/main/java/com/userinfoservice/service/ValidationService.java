@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import com.userinfoservice.entity.UsageRequest;
 import com.userinfoservice.entity.User;
+import com.userinfoservice.entity.UserRequest;
 import com.userinfoservice.enums.UsageType;
 import com.userinfoservice.exceptions.ValidationException;
 
@@ -21,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ValidationService {
 
-	public void validateUser(User user) throws Exception {
+	public void validateUser(UserRequest user) throws Exception {
 		if (user == null)
 			throw new ValidationException("Invalid Request");
 
