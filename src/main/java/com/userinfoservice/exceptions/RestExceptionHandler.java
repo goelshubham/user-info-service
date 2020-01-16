@@ -17,8 +17,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
    @Override
    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-       String error = "Test Message";
-       return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
+       String error = "Something went wrong";
+       return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, error, ex));
    }
 
    private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
@@ -27,6 +27,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
    @ExceptionHandler(ValidationException.class)
    protected ResponseEntity<Object> handleInvalidRequest(ValidationException ex, WebRequest webrequest) 
+   {
+       ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+       apiError.setMessage(ex.getMessage());
+       return buildResponseEntity(apiError);
+   }
+   
+   @ExceptionHandler(DatabaseException.class)
+   protected ResponseEntity<Object> handleDatabaseException(DatabaseException ex, WebRequest webrequest) 
    {
        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
        apiError.setMessage(ex.getMessage());
