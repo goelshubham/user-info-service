@@ -89,7 +89,13 @@ Response:
 }
 ```
 
+### Screenshots from swagger
+![alt text](https://github.com/goelshubham/user-info-service/blob/master/src/main/resources/static/request.jpg)
+![alt text](https://github.com/goelshubham/user-info-service/blob/master/src/main/resources/static/response.jpg)
 
-I have created the REST API documentation through swagger integration. After the service is up and running on localhost then swagger documentation can be found on URL - http://localhost:8090/swagger-ui.html
+### Note:
+1. I have created the REST API documentation through swagger integration. After the service is up and running on localhost then swagger documentation can be found on URL - http://localhost:8090/swagger-ui.html
+2. Due to lack of time, I could not do comprehensive Junit testing. I have added unit testing for one method.
+3. There seems to be some conflict between Junit 4 and Junit 5 framework. If the build fails because of unit test, please make the test runner as Junit 4 instead of Junit 5. I didn't get enough time to find the root cause and fix it permanently. Upon changing the test runner from eclipse IDE to Junit 4, the unit test case passes.
 
 
