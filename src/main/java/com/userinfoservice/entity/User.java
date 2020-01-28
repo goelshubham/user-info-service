@@ -11,6 +11,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import lombok.Data;
@@ -20,7 +23,6 @@ import lombok.Data;
  */
 @Entity
 @Data
-//@IdClass(UserId.class)
 public class User {
 
 	@Id
@@ -35,7 +37,8 @@ public class User {
 
 	String phoneNumber;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany
+	@JoinColumn(name="userId")
 	List<Usage> usages = new ArrayList<Usage>();
 
 }

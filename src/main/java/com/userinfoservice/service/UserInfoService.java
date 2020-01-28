@@ -10,15 +10,20 @@ import java.util.stream.Collectors;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.userinfoservice.entity.Usage;
 import com.userinfoservice.entity.UsageRequest;
 import com.userinfoservice.entity.User;
 import com.userinfoservice.entity.UserRequest;
 import com.userinfoservice.exceptions.DatabaseException;
+import com.userinfoservice.repository.UsageRepository;
 import com.userinfoservice.repository.UserRepository;
 
 import lombok.Data;
@@ -31,6 +36,9 @@ public class UserInfoService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private UsageRepository usageRepository;
 
 	public String storeUserInfo(UserRequest userRequest) throws Exception {
 
@@ -62,19 +70,16 @@ public class UserInfoService {
 		log.debug("storeUsageInfo() - start of method");
 
 		Optional<User> optional = userRepository.findById(usageRequest.getUserId());
-		if (optional.isPresent()) {
-
-			User fetchedUser = optional.get();
-			List<Usage> usages = fetchedUser.getUsages();
-			Usage usage = new Usage();
-			usage.setUsageTime(this.formatUsageDate(usageRequest.getUsageTime()));
-			usage.setUsageType(usageRequest.getUsageType());
-			usages.add(usage);
-			fetchedUser.setUsages(usages);
-			userRepository.save(fetchedUser);
-		} else {
+		if(!optional.isPresent()) {
 			throw new ValidationException("Invalid Request - UserId does not exist");
 		}
+		
+		Usage usage = new Usage();
+		usage.setUserId(usageRequest.getUserId());
+		usage.setUsageType(usageRequest.getUsageType());
+		usage.setUsageTime(this.formatUsageDate(usageRequest.getUsageTime()));
+		
+		usageRepository.save(usage);
 	}
 
 	public Date formatUsageDate(String inputDate) throws ParseException {
@@ -82,6 +87,7 @@ public class UserInfoService {
 		return myFormat.parse(inputDate);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public User getUserUsageInfo(String userId, String type, String startTime) throws Exception {
 
 		Optional<User> optional = userRepository.findById(userId);
@@ -91,18 +97,14 @@ public class UserInfoService {
 
 		Date formatedStartTime = this.formatUsageDate(startTime);
 		User user = optional.get();
-
-		if (user != null) {
-			List<Usage> filteredUsages;
-			if (type.equals("ALL")) {
-				filteredUsages = user.getUsages().stream()
-						.filter(usage -> usage.getUsageTime().after(formatedStartTime)).collect(Collectors.toList());
-			} else {
-				filteredUsages = user.getUsages().stream().filter(usage -> usage.getUsageType().equals(type))
-						.filter(usage -> usage.getUsageTime().after(formatedStartTime)).collect(Collectors.toList());
-			}
-			user.setUsages(filteredUsages);
+		List<Usage> usages;
+		if(type.equalsIgnoreCase("ALL")) {
+			usages = usageRepository.usageListAllUsageType(userId, formatedStartTime);
+		} else {
+			usages = usageRepository.usageListForUsageType(userId, type, formatedStartTime);
 		}
+		
+		user.setUsages(usages);
 		return user;
 	}
 }

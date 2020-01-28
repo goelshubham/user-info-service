@@ -13,6 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 /**
@@ -23,6 +27,7 @@ import lombok.Data;
 @Data
 public class Usage {
 
+	@JsonIgnore
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private int id;
@@ -30,5 +35,8 @@ public class Usage {
 	private String usageType;
 
 	@Temporal(TemporalType.DATE)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private Date usageTime;
+	
+	private String userId;
 }

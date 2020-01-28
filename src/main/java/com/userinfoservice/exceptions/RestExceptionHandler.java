@@ -25,19 +25,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
        return new ResponseEntity<>(apiError, apiError.getStatus());
    }
 
-   @ExceptionHandler(ValidationException.class)
-   protected ResponseEntity<Object> handleInvalidRequest(ValidationException ex, WebRequest webrequest) 
+   @ExceptionHandler(Throwable.class)
+   protected ResponseEntity<Object> handleInvalidRequest(Exception ex, WebRequest webrequest) 
    {
        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
        apiError.setMessage(ex.getMessage());
        return buildResponseEntity(apiError);
    }
    
-   @ExceptionHandler(DatabaseException.class)
-   protected ResponseEntity<Object> handleDatabaseException(DatabaseException ex, WebRequest webrequest) 
-   {
-       ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
-       apiError.setMessage(ex.getMessage());
-       return buildResponseEntity(apiError);
-   }
+	/*
+	 * @ExceptionHandler(DatabaseException.class) protected ResponseEntity<Object>
+	 * handleDatabaseException(DatabaseException ex, WebRequest webrequest) {
+	 * ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+	 * apiError.setMessage(ex.getMessage()); return buildResponseEntity(apiError); }
+	 */
 }
