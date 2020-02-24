@@ -37,8 +37,18 @@ public class User {
 
 	String phoneNumber;
 
+	/* one to many implementation
 	@OneToMany
 	@JoinColumn(name="userId")
 	List<Usage> usages = new ArrayList<Usage>();
+	*/
+	
+	@ManyToMany
+	@JoinTable(name="userUsages",
+	joinColumns = {@JoinColumn(name="userId")},
+	inverseJoinColumns = {@JoinColumn(name="usageId")})
+	List<Usage> usages = new ArrayList<Usage>();
+	
+	private String usageId;
 
 }

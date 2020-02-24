@@ -5,11 +5,14 @@ package com.userinfoservice.entity;
 
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -39,4 +42,9 @@ public class Usage {
 	private Date usageTime;
 	
 	private String userId;
+	
+	@ManyToMany(mappedBy = "usages")
+	Set<User> users = new HashSet<>();
+	
+	
 }
